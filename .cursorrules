@@ -8,7 +8,12 @@ You are a helpful AI assistant specialized in React/TypeScript development with 
 - `mockdowns/ai-coding-guidelines.md` - AI 코딩 스타일 및 품질 기준
 
 ## 🤖 전문 에이전트 시스템
-작업 유형에 따라 적절한 전문 에이전트를 선택하여 작업하세요:
+- 작업 유형에 따라 적절한 전문 에이전트를 선택하여 작업하세요.
+- 모든 에이전트는 자신의 작업이 완료된 후(각 에이전트 내부 체크리스트 완료) 사출물을 작성한다.
+- 사출물 정보는 각 에이전트 폴더에 있는 템플릿을 참조한다.
+- 사출물 양식은 mockdowns/templates 폴더에 있는 템플릿을 참조한다.
+- 각 프로세스가 끝날 시 사출물 작성 후 .cursorrules 의 '커밋 및 버전 관리' 정보를 참조해서 각 agents 폴더의 '커밋 및 버전 관리' 에 따라 커밋을 진행 한다.
+- 커밋 시 agents 폴더의 '커밋 및 버전 관리' 가 없다면 넘어 간다.
 
 ## 🎯 기본 작업 원칙
 
@@ -22,6 +27,8 @@ You are a helpful AI assistant specialized in React/TypeScript development with 
 - 한글 주석으로 코드 의도 설명 (.md 확장자 작성시 이모티콘 활용용)
 - 에러 처리를 미리 고려한 방어적 프로그래밍
 - 단일 책임 원칙 준수
+- AI 가 작성한 함수, 파일은 상단 또는 함수 위에 'Ai Edit' 이라는 주석을 단다.
+- 코드 작성시 'Ai Edit' 이라는 것으로 AI가 작성한 코드인지 구분 한다.
 
 ### 🗂️ 프로젝트 구조 준수
 ```
@@ -58,6 +65,13 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 
 ## 🚀 작업 프로세스
 
+### 0️⃣ 프로젝트 전체 분석
+- 프로젝트 전체를 분석후 다음 작업에 필요한 정보를 산출물로 작성한다.
+- 산출물은 'mockdowns/artifacts' 폴더에 저장한다.
+- 신츨믈 파일 명칭 : 'YYYY-MM-DD_project_structure_버전전.md';
+- 모든 작업은 위의 산출물을 기반으로 위치, 경로 등을 찾는다.
+- 이 부분에서 작성된 산출물의 정보는 다른 작업에서 수정이 불가능 하다.
+
 ### 1️⃣ 문제 분석
 - 요구사항을 단계별로 분해
 - 테스트 케이스 설계
@@ -77,6 +91,9 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 - 코드 중복 제거
 - 성능 최적화
 - 가독성 향상
+
+### 5️⃣ 사출물 점검
+- 모든 사출물 작성을 검토한다.
 
 ## ⚠️ 주의사항
 
@@ -152,11 +169,11 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 
 ### 🔄 콘텍스트 연속성
 
-- **작업 시작 시**: 이전 에이전트의 산출물을 반드시 참조하여 '누적 점수'와 '총점'을 인계받습니다.
-- **작업 완료 시**: 다음 에이전트가 참조할 수 있도록 충분한 정보 제공
+- **작업 시작 시**: 이전 AI Agent의 산출물을 반드시 참조하여 '누적 점수'와 '총점'을 인계받습니다.
+- **작업 완료 시**: 다음 AI Agent가 참조할 수 있도록 충분한 정보 제공
 - **스택 기반 접근**: 실패 시 대안 방법을 스택으로 쌓아 재시도
-- **점수 전달**: 점수는 오직 에이전트 간의 산출물(artifact)을 통해서만 전달되어야 합니다.
-- **최종 보고**: 마지막 에이전트(예: QA)는 최종 누적 점수를 Orchestrator에게 보고하여 프로젝트의 최종 점수를 확정합니다.
+- **점수 전달**: 점수는 오직 AI Agent 간의 산출물(artifact)을 통해서만 전달되어야 합니다.
+- **최종 보고**: 마지막 AI Agent(예: QA)는 최종 누적 점수를 Orchestrator에게 보고하여 프로젝트의 최종 점수를 확정합니다.
 
 // 원문 용어 유지
 Two Key BMAD Innovations: Agentic Planning, Context-Engineered Development

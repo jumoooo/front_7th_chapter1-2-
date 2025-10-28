@@ -135,16 +135,16 @@ it('should work', () => {
 
 ```bash
 # 전체 테스트 실행
-npm test
+pnpm test
 
 # 특정 파일 테스트 실행
-npm test useEventOperations.spec.ts
+pnpm test useEventOperations.spec.ts
 
 # 커버리지 확인
-npm run test:coverage
+pnpm run test:coverage
 
 # Watch 모드로 테스트 실행
-npm run test:watch
+pnpm run test:watch
 ```
 
 ## 📊 테스트 커버리지 목표
