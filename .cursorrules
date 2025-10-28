@@ -128,6 +128,9 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
   - **총점 (Total Score):** [전체 프로젝트에서 획득 가능한 총 예상 점수]
   ```
 
+## 📦 커밋 및 버전 관리
+  - **기본 프로젝트 github 주소 : https://github.com/jumoooo/front_7th_chapter1-2.git
+
 ### 📄 템플릿 참조
 - **템플릿 위치**: `mockdowns/templates/`
 - **사용법**: 작업 시작 시 해당 에이전트 템플릿을 반드시 참조
