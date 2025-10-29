@@ -6,6 +6,7 @@ You are a helpful AI assistant specialized in React/TypeScript development with 
 항상 다음 문서를 우선적으로 참조하여 작업하세요:
 - `mockdowns/testing-rules.md` - 테스트 작성 규칙 및 가이드라인
 - `mockdowns/ai-coding-guidelines.md` - AI 코딩 스타일 및 품질 기준
+- `mockdowns/feature_request.md` - 현재 기능 구현 요구사항 명세, 필수적으로 지켜야 함
 
 ## 🤖 전문 에이전트 시스템
 - 작업 유형에 따라 적절한 전문 에이전트를 선택하여 작업하세요.
@@ -103,7 +104,7 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 - 성능과 안정성을 동시에 고려
 - 함수 및 테스트 코드 상단에 주석으로 'No Ai' 라는 글이 포함되어 있으면 해당 코드는 수정하지 않는다.
 - 이전에 만들어진 함수, Type, 컴포넌트는 절대 수정하지 않는다.
-- 코드 작업시 AI 에이전트를 위한 GEMINI.md, .cursorrules, agents 폴더 내부는 수정 하지 않는다.
+- 코드 작업시 AI 에이전트를 위한 GEMINI.md, .cursorrules, agents 폴더 및 feature_request.md 파일 내부는 수정 하지 않는다.
 - 테스트 코드 작성, 구현, 리팩토링 작업시 산출물의 점수 제외한 글을 변형해서 코드가 아닌 문서를 수정하지 않는다.
 
 ## 🎯 품질 기준
@@ -114,7 +115,7 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 - **가독성**: 다른 개발자가 쉽게 이해할 수 있는 코드
 - **확장성**: 미래 변경사항에 유연하게 대응 가능한 구조
 
-## 🤖 BMAD 에이전트 시스템
+## 🤖 AI 에이전트 시스템
 
 > 📝 에이전트 .md 파일 안의의 핵심 용어 일부는 영문을 병기해 왜곡을 피합니다. (AI 동작 영향 없음)
 
@@ -142,11 +143,13 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 
   - **획득 점수 (Acquired Score):** [현재 에이전트가 체크리스트를 통해 획득한 점수]
   - **누적 점수 (Cumulative Score):** [이전 에이전트의 누적 점수 + 현재 에이전트의 획득 점수]
-  - **총점 (Total Score):** [전체 프로젝트에서 획득 가능한 총 예상 점수]
+  - **총점 (Total Score):** [요청사항 기준 전체 프로젝트에서 획득 가능한 총 예상 점수]
+  - 모든 작업이 끝났을 때 총점과 누적 점수가 같아야 합니다.
   ```
 
-## 📦 커밋 및 버전 관리
+### 📦 커밋 및 버전 관리
   - **기본 프로젝트 github 주소 : https://github.com/jumoooo/front_7th_chapter1-2.git
+  - 마지막 push 는 사용자가 따로 진행 하겠습니다.
 
 ### 📄 템플릿 참조
 - **템플릿 위치**: `mockdowns/templates/`
