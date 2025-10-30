@@ -106,7 +106,94 @@ function App() {
   const [isOverlapDialogOpen, setIsOverlapDialogOpen] = useState(false);
   const [overlappingEvents, setOverlappingEvents] = useState<Event[]>([]);
 
+  // Ai Edit - 반복 일정 수정/삭제 다이얼로그
+  const [isRepeatEditDialogOpen, setIsRepeatEditDialogOpen] = useState(false);
+  const [isRepeatDeleteDialogOpen, setIsRepeatDeleteDialogOpen] = useState(false);
+  const [selectedRepeatEvent, setSelectedRepeatEvent] = useState<Event | null>(null);
+
   const { enqueueSnackbar } = useSnackbar();
+
+  // Ai Edit - 반복 일정 수정 핸들러
+  const handleEditEvent = (event: Event) => {
+    // 반복 일정인지 확인 (repeatGroupId가 있고 repeat.type이 'none'이 아님)
+    if (event.repeatGroupId && event.repeat.type !== 'none') {
+      setSelectedRepeatEvent(event);
+      setIsRepeatEditDialogOpen(true);
+    } else {
+      // 일반 일정은 바로 수정
+      editEvent(event);
+    }
+  };
+
+  // Ai Edit - 반복 일정 삭제 핸들러
+  const handleDeleteEvent = (event: Event) => {
+    // 반복 일정인지 확인
+    if (event.repeatGroupId && event.repeat.type !== 'none') {
+      setSelectedRepeatEvent(event);
+      setIsRepeatDeleteDialogOpen(true);
+    } else {
+      // 일반 일정은 바로 삭제
+      deleteEvent(event.id);
+    }
+  };
+
+  // Ai Edit - 단일 수정 (해당 일정만 수정)
+  const handleEditSingleRepeatEvent = () => {
+    if (selectedRepeatEvent) {
+      // repeat.type을 'none'으로 변경하여 단일 일정으로 전환
+      const eventToEdit = {
+        ...selectedRepeatEvent,
+        repeat: { type: 'none' as const, interval: 0 },
+        isRepeatInstance: false,
+      };
+      editEvent(eventToEdit);
+      setIsRepeatEditDialogOpen(false);
+      setSelectedRepeatEvent(null);
+    }
+  };
+
+  // Ai Edit - 전체 수정 (모든 반복 일정 수정)
+  const handleEditAllRepeatEvents = () => {
+    if (selectedRepeatEvent) {
+      // 반복 설정 유지하면서 수정
+      editEvent(selectedRepeatEvent);
+      setIsRepeatEditDialogOpen(false);
+      setSelectedRepeatEvent(null);
+    }
+  };
+
+  // Ai Edit - 단일 삭제 (해당 일정만 삭제)
+  const handleDeleteSingleRepeatEvent = () => {
+    if (selectedRepeatEvent) {
+      deleteEvent(selectedRepeatEvent.id);
+      setIsRepeatDeleteDialogOpen(false);
+      setSelectedRepeatEvent(null);
+    }
+  };
+
+  // Ai Edit - 전체 삭제 (모든 반복 일정 삭제)
+  const handleDeleteAllRepeatEvents = async () => {
+    if (selectedRepeatEvent && selectedRepeatEvent.repeatGroupId) {
+      try {
+        // 동일한 repeatGroupId를 가진 모든 일정 찾기
+        const repeatEvents = events.filter(
+          (e) => e.repeatGroupId === selectedRepeatEvent.repeatGroupId
+        );
+
+        // 모든 반복 일정 삭제
+        for (const event of repeatEvents) {
+          await deleteEvent(event.id);
+        }
+
+        setIsRepeatDeleteDialogOpen(false);
+        setSelectedRepeatEvent(null);
+        enqueueSnackbar('모든 반복 일정이 삭제되었습니다.', { variant: 'success' });
+      } catch (error) {
+        console.error('Error deleting repeat events:', error);
+        enqueueSnackbar('반복 일정 삭제 실패', { variant: 'error' });
+      }
+    }
+  };
 
   // Ai Edit
   const addOrUpdateEvent = async () => {
@@ -607,10 +694,10 @@ function App() {
                     </Typography>
                   </Stack>
                   <Stack>
-                    <IconButton aria-label="Edit event" onClick={() => editEvent(event)}>
+                    <IconButton aria-label="Edit event" onClick={() => handleEditEvent(event)}>
                       <Edit />
                     </IconButton>
-                    <IconButton aria-label="Delete event" onClick={() => deleteEvent(event.id)}>
+                    <IconButton aria-label="Delete event" onClick={() => handleDeleteEvent(event)}>
                       <Delete />
                     </IconButton>
                   </Stack>
@@ -659,6 +746,42 @@ function App() {
             }}
           >
             계속 진행
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Ai Edit - 반복 일정 수정 다이얼로그 */}
+      <Dialog open={isRepeatEditDialogOpen} onClose={() => setIsRepeatEditDialogOpen(false)}>
+        <DialogTitle>반복 일정 수정</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            해당 일정만 수정하시겠어요?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditAllRepeatEvents}>
+            아니오 (모든 반복 일정 수정)
+          </Button>
+          <Button onClick={handleEditSingleRepeatEvent} color="primary">
+            예 (해당 일정만 수정)
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Ai Edit - 반복 일정 삭제 다이얼로그 */}
+      <Dialog open={isRepeatDeleteDialogOpen} onClose={() => setIsRepeatDeleteDialogOpen(false)}>
+        <DialogTitle>반복 일정 삭제</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            해당 일정만 삭제하시겠어요?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteAllRepeatEvents} color="error">
+            아니오 (모든 반복 일정 삭제)
+          </Button>
+          <Button onClick={handleDeleteSingleRepeatEvent} color="primary">
+            예 (해당 일정만 삭제)
           </Button>
         </DialogActions>
       </Dialog>
