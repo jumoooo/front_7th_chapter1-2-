@@ -35,20 +35,26 @@ export function getLastDayOfMonth(year: number, month: number): number {
 
 /**
  * ✅ 반복 날짜가 유효한지 검증합니다.
- * 매년 2월 29일 → 윤년이 아닌 해는 건너뛰기
+ * 매월 반복: 해당 월에 날짜가 없으면 건너뛰기 (generateRepeatDates에서 처리)
+ * 매년 반복: 윤년 2월 29일 → 윤년이 아닌 해는 건너뛰기
  */
 export function isValidRepeatDate(
   targetDate: Date,
   originalDate: Date,
   repeatType: RepeatType
 ): boolean {
-  // 매일, 매주, 매월 반복은 항상 유효 (매월은 별도로 말일 처리)
-  if (repeatType === 'daily' || repeatType === 'weekly' || repeatType === 'monthly') {
+  // 매일, 매주 반복은 항상 유효
+  if (repeatType === 'daily' || repeatType === 'weekly') {
     return true;
   }
 
   const originalDay = originalDate.getDate();
   const originalMonth = originalDate.getMonth() + 1;
+
+  // 매월 반복: generateRepeatDates에서 이미 처리됨
+  if (repeatType === 'monthly') {
+    return true;
+  }
 
   // 매년 반복: 윤년 2월 29일 체크
   if (repeatType === 'yearly') {
@@ -125,13 +131,17 @@ export function generateRepeatDates(options: RepeatDateGenerationOptions): strin
       const targetYear = originalDate.getFullYear() + Math.floor((originalDate.getMonth() + totalMonths) / 12);
       const targetMonth = (originalDate.getMonth() + totalMonths) % 12;
 
-      // 대상 월의 마지막 날 계산
+      // 🔍 대상 월에 원본 날짜가 존재하는지 확인
       const lastDayOfTargetMonth = getLastDayOfMonth(targetYear, targetMonth + 1);
 
-      // 원본 날짜와 대상 월의 마지막 날 중 작은 값 선택
-      const targetDay = Math.min(originalDay, lastDayOfTargetMonth);
+      // ⚠️ 31일 특수 케이스: 해당 월에 날짜가 없으면 건너뛰기
+      if (originalDay > lastDayOfTargetMonth) {
+        repeatCount++;
+        continue;
+      }
 
-      currentDate = new Date(targetYear, targetMonth, targetDay);
+      // 원본 날짜 그대로 사용
+      currentDate = new Date(targetYear, targetMonth, originalDay);
     } else if (repeatType === 'yearly') {
       // 매년: 시작일 + (interval * repeatCount) 년
       const originalMonth = originalDate.getMonth();
