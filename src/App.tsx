@@ -95,7 +95,7 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
+  const { events, fetchEvents, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
     setEditingEvent(null)
   );
 
@@ -110,6 +110,8 @@ function App() {
   const [isRepeatEditDialogOpen, setIsRepeatEditDialogOpen] = useState(false);
   const [isRepeatDeleteDialogOpen, setIsRepeatDeleteDialogOpen] = useState(false);
   const [selectedRepeatEvent, setSelectedRepeatEvent] = useState<Event | null>(null);
+  // Ai Edit - 전체 수정 여부 플래그
+  const [isEditAllRepeat, setIsEditAllRepeat] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -140,6 +142,7 @@ function App() {
   // Ai Edit - 단일 수정 (해당 일정만 수정)
   const handleEditSingleRepeatEvent = () => {
     if (selectedRepeatEvent) {
+      setIsEditAllRepeat(false);
       // repeat.type을 'none'으로 변경하여 단일 일정으로 전환
       const eventToEdit = {
         ...selectedRepeatEvent,
@@ -155,7 +158,8 @@ function App() {
   // Ai Edit - 전체 수정 (모든 반복 일정 수정)
   const handleEditAllRepeatEvents = () => {
     if (selectedRepeatEvent) {
-      // 반복 설정 유지하면서 수정
+      // 반복 전체 수정 플래그 활성화 후 편집 시작
+      setIsEditAllRepeat(true);
       editEvent(selectedRepeatEvent);
       setIsRepeatEditDialogOpen(false);
       setSelectedRepeatEvent(null);
@@ -255,6 +259,62 @@ function App() {
       },
       notificationTime,
     };
+
+    // Ai Edit - 전체 수정 처리 (/api/events-list PUT 사용)
+    if (editingEvent && isEditAllRepeat) {
+      try {
+        const serverRepeatId = (editingEvent as any)?.repeat?.id;
+        const groupId = (editingEvent as any)?.repeatGroupId;
+        const seriesEvents = events.filter((e) => {
+          if (serverRepeatId) return (e as any)?.repeat?.id === serverRepeatId;
+          if (groupId) return (e as any)?.repeatGroupId === groupId;
+          return false;
+        });
+
+        if (seriesEvents.length === 0) {
+          enqueueSnackbar('수정할 반복 일정을 찾지 못했습니다.', { variant: 'warning' });
+          return;
+        }
+
+        const updatedEvents = seriesEvents.map((e) => ({
+          ...e,
+          title,
+          date: e.date,
+          startTime,
+          endTime,
+          description,
+          location,
+          category,
+          repeat: {
+            ...e.repeat,
+            type: isRepeating ? repeatType : 'none',
+            interval: isRepeating ? repeatInterval : 0,
+            endDate: isRepeating ? repeatEndDate || undefined : undefined,
+          },
+          notificationTime,
+        }));
+
+        const response = await fetch('/api/events-list', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ events: updatedEvents }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update recurring events');
+        }
+
+        await fetchEvents();
+        setIsEditAllRepeat(false);
+        setEditingEvent(null);
+        enqueueSnackbar('모든 반복 일정이 수정되었습니다.', { variant: 'success' });
+        return;
+      } catch (error) {
+        console.error('Error updating recurring events:', error);
+        enqueueSnackbar('반복 일정 전체 수정 실패', { variant: 'error' });
+        return;
+      }
+    }
 
     const overlapping = findOverlappingEvents(eventData, events);
     if (overlapping.length > 0) {

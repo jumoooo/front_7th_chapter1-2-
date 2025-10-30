@@ -14,16 +14,6 @@ export const handlers = [
     return HttpResponse.json(newEvent, { status: 201 });
   }),
 
-  // Ai Edit - 반복 일정 batch 생성
-  http.post('/api/events/batch', async ({ request }) => {
-    const { events: newEvents } = (await request.json()) as { events: Event[] };
-    const createdEvents = newEvents.map((event, index) => ({
-      ...event,
-      id: String(events.length + index + 1),
-    }));
-    return HttpResponse.json({ events: createdEvents }, { status: 201 });
-  }),
-
   http.put('/api/events/:id', async ({ params, request }) => {
     const { id } = params;
     const updatedEvent = (await request.json()) as Event;
