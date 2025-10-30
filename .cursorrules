@@ -7,6 +7,8 @@ You are a helpful AI assistant specialized in React/TypeScript development with 
 - `mockdowns/testing-rules.md` - 테스트 작성 규칙 및 가이드라인
 - `mockdowns/ai-coding-guidelines.md` - AI 코딩 스타일 및 품질 기준
 - `mockdowns/feature_request.md` - 현재 기능 구현 요구사항 명세, 필수적으로 지켜야 함
+- MCP에 활성화 된 `context7` 문서를 참조하여 코딩 스타일과 테스트 작성 가이드를 준수
+- MCP에 활성화 된 `Sequential Thinking` 기반으로 기능 구현, 테스트 단계를 논리적 순서에 맞춰 진행
 
 ## 🤖 전문 에이전트 시스템
 - 작업 유형에 따라 적절한 전문 에이전트를 선택하여 작업하세요.
@@ -22,6 +24,8 @@ You are a helpful AI assistant specialized in React/TypeScript development with 
 - 모든 기능 구현 전에 테스트를 먼저 작성
 - Given-When-Then 패턴 사용
 - 테스트명은 한국어로 작성하고 구체적으로 명시
+- 테스트 작성 시 **이전에 작성된 테스트 코드와 context7 가이드 문서를 우선적으로 참고**
+- 이전 유사 테스트 코드 위치 : `src/__tests__` 하위 폴더, 파일 참고
 
 ### 📝 코딩 스타일
 - 변수명과 함수명은 명확하고 직관적으로 작성
@@ -29,7 +33,7 @@ You are a helpful AI assistant specialized in React/TypeScript development with 
 - 에러 처리를 미리 고려한 방어적 프로그래밍
 - 단일 책임 원칙 준수
 - AI 가 작성한 함수, 파일은 상단 또는 함수 위에 'Ai Edit' 이라는 주석을 단다.
-- 코드 작성시 'Ai Edit' 이라는 것으로 AI가 작성한 코드인지 구분 한다.
+- 코드 조회시 'Ai Edit' 이라는 주석이 포함되어 있으면 AI가 작성한 코드인지 구분 한다.
 
 ### 🗂️ 프로젝트 구조 준수
 ```
@@ -69,7 +73,7 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 ### 0️⃣ 프로젝트 전체 분석
 - 프로젝트 전체를 분석후 다음 작업에 필요한 정보를 산출물로 작성한다.
 - 산출물은 'mockdowns/artifacts' 폴더에 저장한다.
-- 신츨믈 파일 명칭 : 'YYYY-MM-DD_project_structure_버전전.md';
+- 신츨믈 파일 명칭 : 'YYYY-MM-DD_project_structure_버전.md';
 - 모든 작업은 위의 산출물을 기반으로 위치, 경로 등을 찾는다.
 - 이 부분에서 작성된 산출물의 정보는 다른 작업에서 수정이 불가능 하다.
 
@@ -93,7 +97,30 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 - 성능 최적화
 - 가독성 향상
 
-### 5️⃣ 최종 점검
+### 5️⃣ 추가한 기능에 대한 통합 테스트 작성
+- 기존 유닛 테스트가 모두 통과했더라도 **실제 사용자 시나리오 중심으로 재검증**해야 한다.
+- 예: 사용자가 직업을 입력하고 확인 버튼을 눌렀을 때 결과가 표시되는지 검증
+- Given-When-Then 패턴을 사용하고 테스트명은 한국어로 작성
+- 테스트 실패시 문제 해결 후 다음 단계로 진행 한다.
+
+> 💡 통합 테스트는 단순한 모듈 결합 검증이 아닌, **사용자 시나리오 기반의 흐름 검증**을 목표로 한다.  
+> 즉, 실제 사용자가 입력 → 클릭 → 결과 확인 등 일련의 행동을 수행하는 과정을 테스트 코드로 재현해야 한다.  
+> 이를 통해 유닛 테스트로는 검증할 수 없는 **기능 간 연동과 UI/UX 흐름의 신뢰성**을 확보한다.
+> 테스트 코드 작성시 우선적으로 이미 작성된 코드를 참고한다. (이전 유사 테스트 코드 위치 : `src/__tests__` 하위)
+
+- 사용자 시나리오가 새로 생성되거나, 여러 컴포넌트에 걸친 핵심 로직이 크게 변경될 때. **새로운 통합 테스트 파일을 생성**하여 전체 시나리오를 검증한다.
+- 테스트 파일은 `src/__tests__/integration/` 경로에 생성
+- 테스트 파일 명은 `[feature-name].integration_[버전].spec.ts` 형식으로 작성
+- 테스트는 `mockdowns/feature_request.md` 파일에 명시된 내용을 참조한다.
+
+### 6️⃣ 반복
+- feature_request.md에 명시된 모든 기능 완료될 때까지 3~5단계 반복
+- 기능 완료 시 체크리스트 점수 자동 기록: [SCORE] +1
+- 기능 단위 진행 결과 및 점수 누적 출력
+- 점수 재검증: 재작업 완료 후 체크리스트와 점수 자동 업데이트
+- 누적 점수 확인 후 다음 단계로 인계
+
+### 7️⃣ 최종 점검
 - 모든 사출물 작성을 검토한다.
 - 쓰이지 않은 함수 또는 누락된 내용이 없는지 전체 검수 진행한다.
 - 위 내용 이상이 있을시 재작업을 진행 한다. 재작업 시 체크리스트의 점수는 그에 맞게 감점 된다.
@@ -109,6 +136,7 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 - 이전에 만들어진 함수, Type, 컴포넌트는 절대 수정하지 않는다.
 - 코드 작업시 AI 에이전트를 위한 GEMINI.md, .cursorrules, agents 폴더 및 feature_request.md 파일 내부는 수정 하지 않는다.
 - 테스트 코드 작성, 구현, 리팩토링 작업시 산출물의 점수 제외한 글을 변형해서 코드가 아닌 문서를 수정하지 않는다.
+- 재작업 5번 이상시 경고와 함께 작업을 종료 한다.
 
 ## 🎯 품질 기준
 
@@ -118,7 +146,7 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 - **가독성**: 다른 개발자가 쉽게 이해할 수 있는 코드
 - **확장성**: 미래 변경사항에 유연하게 대응 가능한 구조
 
-## 🤖 AI 에이전트 시스템
+## 🤖 BMAD 에이전트 시스템
 
 > 📝 에이전트 .md 파일 안의의 핵심 용어 일부는 영문을 병기해 왜곡을 피합니다. (AI 동작 영향 없음)
 
@@ -152,7 +180,8 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
 
 ### 📦 커밋 및 버전 관리
   - **기본 프로젝트 github 주소 : https://github.com/jumoooo/front_7th_chapter1-2.git
-  - 마지막 push 는 사용자가 따로 진행 하겠습니다.
+  - 최종 구현 전까지는 각 Ai Agent 의 양식에 맞는 새로운 브랜치에 커밋 까지만 진행 한다.
+  - 기능 구현을 끝낸 후 프로젝트 마지막 최종 push 는 사용자가 따로 진행 하겠습니다.
 
 ### 📄 템플릿 참조
 - **템플릿 위치**: `mockdowns/templates/`
