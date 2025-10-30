@@ -128,7 +128,8 @@ export function generateRepeatDates(options: RepeatDateGenerationOptions): strin
       // 매월: 시작일 + (interval * repeatCount) 개월
       const originalDay = originalDate.getDate();
       const totalMonths = interval * repeatCount;
-      const targetYear = originalDate.getFullYear() + Math.floor((originalDate.getMonth() + totalMonths) / 12);
+      const targetYear =
+        originalDate.getFullYear() + Math.floor((originalDate.getMonth() + totalMonths) / 12);
       const targetMonth = (originalDate.getMonth() + totalMonths) % 12;
 
       // 🔍 대상 월에 원본 날짜가 존재하는지 확인
@@ -178,4 +179,3 @@ export function generateRepeatDates(options: RepeatDateGenerationOptions): strin
 
   return repeatDates;
 }
-
