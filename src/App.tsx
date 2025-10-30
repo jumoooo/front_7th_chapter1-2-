@@ -35,8 +35,8 @@ import { useEventForm } from './hooks/useEventForm.ts';
 import { useEventOperations } from './hooks/useEventOperations.ts';
 import { useNotifications } from './hooks/useNotifications.ts';
 import { useSearch } from './hooks/useSearch.ts';
-// import { Event, EventForm, RepeatType } from './types';
-import { Event, EventForm } from './types';
+// Ai Edit
+import { Event, EventForm, RepeatType } from './types';
 import {
   formatDate,
   formatMonth,
@@ -77,11 +77,11 @@ function App() {
     isRepeating,
     setIsRepeating,
     repeatType,
-    // setRepeatType,
+    setRepeatType,
     repeatInterval,
-    // setRepeatInterval,
+    setRepeatInterval,
     repeatEndDate,
-    // setRepeatEndDate,
+    setRepeatEndDate,
     notificationTime,
     setNotificationTime,
     startTimeError,
@@ -107,6 +107,7 @@ function App() {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  // Ai Edit
   const addOrUpdateEvent = async () => {
     if (!title || !date || !startTime || !endTime) {
       enqueueSnackbar('필수 정보를 모두 입력해주세요.', { variant: 'error' });
@@ -116,6 +117,31 @@ function App() {
     if (startTimeError || endTimeError) {
       enqueueSnackbar('시간 설정을 확인해주세요.', { variant: 'error' });
       return;
+    }
+
+    // 🔍 반복 일정 유효성 검사
+    if (isRepeating && repeatType !== 'none') {
+      if (!repeatEndDate) {
+        enqueueSnackbar('반복 종료일을 입력해주세요.', { variant: 'error' });
+        return;
+      }
+
+      if (repeatInterval < 1) {
+        enqueueSnackbar('반복 간격은 1 이상이어야 합니다.', { variant: 'error' });
+        return;
+      }
+
+      // 종료일이 시작일보다 이전인지 확인
+      if (new Date(repeatEndDate) < new Date(date)) {
+        enqueueSnackbar('반복 종료일은 시작일보다 이후여야 합니다.', { variant: 'error' });
+        return;
+      }
+
+      // 종료일이 2025-12-31을 초과하는지 확인
+      if (new Date(repeatEndDate) > new Date('2025-12-31')) {
+        enqueueSnackbar('반복 종료일은 2025-12-31까지만 설정 가능합니다.', { variant: 'error' });
+        return;
+      }
     }
 
     const eventData: Event | EventForm = {
@@ -437,8 +463,8 @@ function App() {
             </Select>
           </FormControl>
 
-          {/* ! 반복은 8주차 과제에 포함됩니다. 구현하고 싶어도 참아주세요~ */}
-          {/* {isRepeating && (
+          {/* Ai Edit - 반복 일정 UI 활성화 */}
+          {isRepeating && (
             <Stack spacing={2}>
               <FormControl fullWidth>
                 <FormLabel>반복 유형</FormLabel>
@@ -446,6 +472,7 @@ function App() {
                   size="small"
                   value={repeatType}
                   onChange={(e) => setRepeatType(e.target.value as RepeatType)}
+                  aria-label="반복 유형"
                 >
                   <MenuItem value="daily">매일</MenuItem>
                   <MenuItem value="weekly">매주</MenuItem>
@@ -462,6 +489,7 @@ function App() {
                     value={repeatInterval}
                     onChange={(e) => setRepeatInterval(Number(e.target.value))}
                     slotProps={{ htmlInput: { min: 1 } }}
+                    aria-label="반복 간격"
                   />
                 </FormControl>
                 <FormControl fullWidth>
@@ -471,11 +499,13 @@ function App() {
                     type="date"
                     value={repeatEndDate}
                     onChange={(e) => setRepeatEndDate(e.target.value)}
+                    slotProps={{ htmlInput: { max: '2025-12-31' } }}
+                    aria-label="반복 종료일"
                   />
                 </FormControl>
               </Stack>
             </Stack>
-          )} */}
+          )}
 
           <Button
             data-testid="event-submit-button"
