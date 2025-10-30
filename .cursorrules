@@ -145,6 +145,7 @@ const calculateEventDuration = (startTime: string, endTime: string): number => {
   ```
 
 ### 📦 커밋 및 버전 관리
+  - 커밋시 한글 메시지가 깨지지 않게 처리 한다.
   - **기본 프로젝트 github 주소 : https://github.com/jumoooo/front_7th_chapter1-2.git
   - **원칙**: 최종 구현 전까지는 각 Ai Agent 의 양식에 맞는 새로운 브랜치에 커밋 까지만 진행하며, `main` 브랜치로의 직접적인 push는 금지됩니다.
   - **세부 전략**: 브랜치 명명 규칙 등 구체적인 브랜치 전략은 `agents/scrum-master.md`의 지침을 따릅니다.

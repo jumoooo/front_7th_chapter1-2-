@@ -17,10 +17,11 @@
 ### 📜 Architect's Operational Directives
 
 #### 1. 프로젝트 구조 분석 (Project Structure Analysis)
+
 - **Objective**: 본격적인 개발에 앞서 프로젝트의 전체 구조, 의존성, 핵심 설정 파일을 분석하여 기술적 기반을 파악합니다.
 - **Process**:
   1.  `package.json`, `tsconfig.json`, `vite.config.ts` 등 핵심 설정 파일을 분석하여 기술 스택과 빌드 프로세스를 이해합니다.
-  2.  `src` 폴더의 전체 디렉토리 구조를 파악하여 기존 코드의 패턴과 컨벤션을 식별합니다.
+  2.  Root 폴더의 전체 디렉토리 구조를 파악하여 기존 코드의 패턴과 컨벤션을 식별합니다.(server.js 포함)
   3.  분석 결과를 기반으로, 신규 기능이 통합될 최적의 위치와 방식을 결정합니다.
 - **Artifact**: 분석 완료 후 `mockdowns/artifacts/YYYY-MM-DD_project_structure_v1.0.md` 형식으로 산출물을 생성합니다. 이 산출물은 모든 후속 작업의 기술적 기준으로 사용되며, 다른 에이전트에 의해 수정될 수 없습니다.
 
