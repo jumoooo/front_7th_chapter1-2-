@@ -7,8 +7,12 @@ import { Event } from '../types';
  * @returns 반복 아이콘을 표시해야 하면 true, 아니면 false
  */
 export function shouldShowRepeatIcon(event: Event): boolean {
-  // repeatGroupId가 있고, repeat.type이 'none'이 아니면 반복 아이콘 표시
-  return Boolean(event.repeatGroupId) && event.repeat.type !== 'none';
+  // Ai Edit: 서버(/api/events-list)에서는 repeat.id를 사용, 클라이언트 생성은 repeatGroupId 사용
+  // isRepeatInstance가 true인 경우도 반복 인스턴스로 간주
+  const hasServerRepeatId = (event as any)?.repeat?.id;
+  const hasClientRepeatGroup = event.repeatGroupId;
+  const isInstance = (event as any)?.isRepeatInstance;
+  return (Boolean(hasServerRepeatId) || Boolean(hasClientRepeatGroup) || Boolean(isInstance)) && event.repeat.type !== 'none';
 }
 
 /**

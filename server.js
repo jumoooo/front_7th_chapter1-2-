@@ -38,6 +38,24 @@ app.post('/api/events', async (req, res) => {
   res.status(201).json(newEvent);
 });
 
+// Ai Edit - 반복 일정 batch 생성 API
+app.post('/api/events/batch', async (req, res) => {
+  const events = await getEvents();
+  const newEvents = req.body.events.map((event) => ({
+    id: randomUUID(),
+    ...event,
+  }));
+
+  fs.writeFileSync(
+    `${__dirname}/src/__mocks__/response/${dbName}`,
+    JSON.stringify({
+      events: [...events.events, ...newEvents],
+    })
+  );
+
+  res.status(201).json({ events: newEvents });
+});
+
 app.put('/api/events/:id', async (req, res) => {
   const events = await getEvents();
   const id = req.params.id;

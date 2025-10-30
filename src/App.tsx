@@ -115,8 +115,8 @@ function App() {
 
   // Ai Edit - 반복 일정 수정 핸들러
   const handleEditEvent = (event: Event) => {
-    // 반복 일정인지 확인 (repeatGroupId가 있고 repeat.type이 'none'이 아님)
-    if (event.repeatGroupId && event.repeat.type !== 'none') {
+    // 반복 일정인지 확인 (repeatGroupId 또는 repeat.id가 있고 repeat.type이 'none'이 아님)
+    if ((event.repeatGroupId || (event as any)?.repeat?.id) && event.repeat.type !== 'none') {
       setSelectedRepeatEvent(event);
       setIsRepeatEditDialogOpen(true);
     } else {
@@ -128,7 +128,7 @@ function App() {
   // Ai Edit - 반복 일정 삭제 핸들러
   const handleDeleteEvent = (event: Event) => {
     // 반복 일정인지 확인
-    if (event.repeatGroupId && event.repeat.type !== 'none') {
+    if ((event.repeatGroupId || (event as any)?.repeat?.id) && event.repeat.type !== 'none') {
       setSelectedRepeatEvent(event);
       setIsRepeatDeleteDialogOpen(true);
     } else {
@@ -173,12 +173,19 @@ function App() {
 
   // Ai Edit - 전체 삭제 (모든 반복 일정 삭제)
   const handleDeleteAllRepeatEvents = async () => {
-    if (selectedRepeatEvent && selectedRepeatEvent.repeatGroupId) {
+    if (selectedRepeatEvent) {
       try {
-        // 동일한 repeatGroupId를 가진 모든 일정 찾기
-        const repeatEvents = events.filter(
-          (e) => e.repeatGroupId === selectedRepeatEvent.repeatGroupId
-        );
+        // 동일한 그룹을 가진 모든 일정 찾기 (repeatGroupId 우선, 없으면 repeat.id 사용)
+        const serverRepeatId = (selectedRepeatEvent as any)?.repeat?.id;
+        const repeatEvents = events.filter((e) => {
+          if (selectedRepeatEvent.repeatGroupId) {
+            return e.repeatGroupId === selectedRepeatEvent.repeatGroupId;
+          }
+          if (serverRepeatId) {
+            return (e as any)?.repeat?.id === serverRepeatId;
+          }
+          return false;
+        });
 
         // 모든 반복 일정 삭제
         for (const event of repeatEvents) {

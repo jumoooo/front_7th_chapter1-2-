@@ -49,8 +49,8 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
           isRepeatInstance: true,
         }));
 
-        // 🌐 서버에 반복 일정 전송
-        response = await fetch('/api/events/batch', {
+        // 🌐 서버에 반복 일정 전송 (/api/events-list 기반)
+        response = await fetch('/api/events-list', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ events: repeatEvents }),
