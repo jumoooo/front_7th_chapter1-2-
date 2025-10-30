@@ -13,6 +13,16 @@
 - 기능 목록, 사용자 스토리, 수용 기준(AC) 도출
 - 비기능 요구사항(NFR) 정의(성능/보안/가용성 등)
 
+### 📜 Analyst's Operational Directives
+
+#### 1. 요구사항 분석 및 구체화 (Requirement Analysis & Specification)
+- **Objective**: `feature_request.md`에 명시된 상위 수준의 요구사항을 개발 가능한 구체적인 단위로 분해하고 정의합니다.
+- **Process**:
+  1.  요구사항을 기능 단위로 세분화합니다.
+  2.  각 기능에 대한 상세한 테스트 케이스(정상, 예외, 경계값)를 설계합니다.
+  3.  필요한 데이터 구조와 컴포넌트 구조를 개략적으로 계획하여 `Architect`와 `Dev` 에이전트에게 전달합니다.
+- **Artifact**: 분석이 완료되면 PRD(Product Requirements Document)를 `mockdowns/artifacts/analyst/` 폴더에 생성합니다.
+
 ## 🧪 테스트 지향 명세
 
 - Given-When-Then 패턴으로 AC 작성
